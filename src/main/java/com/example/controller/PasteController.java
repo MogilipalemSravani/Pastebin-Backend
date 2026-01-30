@@ -1,8 +1,8 @@
 package com.example.controller;
 
+import java.time.Instant;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.DTO.PasteResponse;
 import com.example.entity.Paste;
 import com.example.service.PasteService;
 
@@ -57,7 +58,7 @@ public class PasteController {
 
         return service.fetch(id, now);
     }*/
-    @GetMapping("/{id}")
+   /* @GetMapping("/{id}")
     public ResponseEntity<Paste> viewPaste(@PathVariable String id) {
         Paste paste = service.fetch(id);
 
@@ -66,5 +67,41 @@ public class PasteController {
         }
 
         return ResponseEntity.ok(paste);
+    }*/
+  /*  @GetMapping("/{id}")
+    public ResponseEntity<?> viewPaste(@PathVariable String id) {
+        try {
+            Paste paste = service.fetch(id);
+
+            return ResponseEntity.ok(Map.of(
+                "content", paste.getContent(),
+                "remaining_views", paste.getMaxViews() == null
+                    ? null
+                    : paste.getMaxViews() - paste.getViewCount(),
+                "expires_at", paste.getExpiresAt()
+            ));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(
+                Map.of("error", e.getMessage())
+            );
+        }
+    }*/
+    @GetMapping("/{id}")
+    public ResponseEntity<?> viewPaste(@PathVariable String id) {
+        Paste paste = service.fetch(id, Instant.now());
+
+        Integer remainingViews = null;
+        if (paste.getMaxViews() != null) {
+            remainingViews = paste.getMaxViews() - paste.getViewCount();
+        }
+
+        PasteResponse response = new PasteResponse(
+            paste.getContent(),
+            remainingViews,
+            paste.getExpiresAt()
+        );
+
+        return ResponseEntity.ok(response);
     }
-}
+    }

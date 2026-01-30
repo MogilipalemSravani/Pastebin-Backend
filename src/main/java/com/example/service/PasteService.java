@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.Repository.PasteRepository;
 import com.example.entity.Paste;
+import com.example.exception.PasteUnavailableException;
 
 @Service
 public class PasteService {
@@ -35,11 +36,11 @@ public class PasteService {
     // FETCH
     public Paste fetch(String id, Instant now) {
         Paste paste = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paste not found"));
+                .orElseThrow(() -> new PasteUnavailableException("Paste not found"));
 
         // Expiry check
         if (paste.getExpiresAt() != null && paste.getExpiresAt().isBefore(now)) {
-            throw new RuntimeException("Paste expired");
+            throw new PasteUnavailableException("Paste expired");
         }
 
         // View limit check
@@ -47,19 +48,27 @@ public class PasteService {
             paste.getViewCount() >= paste.getMaxViews()) {
             throw new RuntimeException("Paste view limit exceeded");
         }
-
+        if (paste.getExpiresAt() != null && paste.getExpiresAt().isBefore(now)) {
+            throw new PasteUnavailableException("Paste expired");
+        }
+        if (paste.getMaxViews() != null &&
+                paste.getViewCount() >= paste.getMaxViews()) {
+                throw new PasteUnavailableException("Paste view limit exceeded");
+            }
         // Increment view count
         paste.setViewCount(paste.getViewCount() + 1);
         repository.save(paste);
 
         return paste;
     }
+    public Paste fetch(String id) {
+        return fetch(id, Instant.now());
+    }
+    
 
-	public Paste fetch(String id) {
-		// TODO Auto-generated method stub
-		return repository.findById(id).orElse(null);
-	}
+    
 }
+
 
 	
 

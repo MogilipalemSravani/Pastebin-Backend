@@ -125,6 +125,14 @@ import jakarta.persistence.PrePersist;
 	        }
 	    }
 
+
+
+
+		public Object getRemainingViews() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	    
 	    
 	    
