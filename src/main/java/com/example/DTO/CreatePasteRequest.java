@@ -1,7 +1,10 @@
 package com.example.DTO;
 
+import jakarta.persistence.Column;
+
 public class CreatePasteRequest {
 	private String content;
+	@Column(name = "ttlSeconds")
 	private Integer ttl_seconds;
 	private Integer max_views;
 	public String getContent() {
