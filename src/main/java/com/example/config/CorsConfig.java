@@ -14,7 +14,7 @@ public class CorsConfig {
 	            public void addCorsMappings(CorsRegistry registry) {
 	            	registry.addMapping("/**")
                     .allowedOrigins(
-                    		"https://pastebin-frontend-cdr2-pyi8smhkn-sravani-ms-projects.vercel.app"
+                    		"https://pastebin-frontend-cdr2.vercel.app/"
                     )
                     .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                     .allowedHeaders("*")
